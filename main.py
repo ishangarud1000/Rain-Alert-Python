@@ -1,38 +1,31 @@
-# To run and test the code you need to update 4 places:
-# 1. Change MY_EMAIL/MY_PASSWORD to your own details.
-# 2. Go to your email provider and make it allow less secure apps.
-# 3. Update the SMTP ADDRESS to match your email provider.
-# 4. Update birthdays.csv to contain today's month and day.
-# See the solution video in the 100 Days of Python Course for explainations.
+import requests
+import smtplib as st
 
+endpoint="https://api.openweathermap.org/data/2.5/forecast"
+api_key="b72eb3406e0db1837e384d9253af02c9"
 
-from datetime import datetime
-import pandas
-import random
-import smtplib
-import os
+my_email="trinetrateam04@gmail.com"
+password = "hqah rtwz ebop xykw"
 
-# import os and use it to get the Github repository secrets
-MY_EMAIL = os.environ.get("MY_EMAIL")
-MY_PASSWORD = os.environ.get("MY_PASSWORD")
+weather_params={
+    "lat":44.4323,
+    "lon":26.1063,
+    "appid":api_key,
+    "cnt":4
+}
+will_rain=False
 
-today = datetime.now()
-today_tuple = (today.month, today.day)
+response=requests.get(url=endpoint,params=weather_params)
+response.raise_for_status()
+weather_data=response.json()
+for hour_data in weather_data["list"]:
+    condition_code=hour_data["weather"][0]["id"]
+    if condition_code<700:
+        will_rain=True
 
-data = pandas.read_csv("birthdays.csv")
-birthdays_dict = {(data_row["month"], data_row["day"])                  : data_row for (index, data_row) in data.iterrows()}
-if today_tuple in birthdays_dict:
-    birthday_person = birthdays_dict[today_tuple]
-    file_path = f"letter_templates/letter_{random.randint(1, 3)}.txt"
-    with open(file_path) as letter_file:
-        contents = letter_file.read()
-        contents = contents.replace("[NAME]", birthday_person["name"])
-
-    with smtplib.SMTP("YOUR EMAIL PROVIDER SMTP SERVER ADDRESS") as connection:
-        connection.starttls()
-        connection.login(MY_EMAIL, MY_PASSWORD)
-        connection.sendmail(
-            from_addr=MY_EMAIL,
-            to_addrs=birthday_person["email"],
-            msg=f"Subject:Happy Birthday!\n\n{contents}"
-        )
+if will_rain:
+    with st.SMTP('smtp.gmail.com') as smtp:
+        smtp.starttls()
+        smtp.login(my_email, password)
+        smtp.sendmail(from_addr=my_email, to_addrs="ishangarud1000@gmail.com", msg="Subject:Its Going to Rain,\n\n Don't "
+                                                                                   "forget to bring your umbrella")
