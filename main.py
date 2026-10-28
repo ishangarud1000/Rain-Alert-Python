@@ -5,7 +5,7 @@ endpoint="https://api.openweathermap.org/data/2.5/forecast"
 api_key="b72eb3406e0db1837e384d9253af02c9"
 
 my_email="trinetrateam04@gmail.com"
-password = "hqah rtwz ebop xykw"
+password = "trinetra04&&"
 
 weather_params={
     "lat":44.4323,
